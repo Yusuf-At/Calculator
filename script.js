@@ -1,40 +1,111 @@
-const buttons = document.querySelectorAll('.button');
+const numbersButton = document.querySelectorAll('.number');
 const operatorButton = document.querySelectorAll('.operator');
+const equalButton = document.querySelector('.equal');
 
 const screenCurrent = document.querySelector('.current');
 const screenPrev = document.querySelector('.previous-operand');
 
+let operator = '';
+let previousValue = '';
+let currentValue = '';
+
 // efect on button
-buttons.forEach(button => {
-    button.addEventListener('mouseover', () => (button.style.cssText = "background-color: rgb(153, 115, 69);"))
+numbersButton.forEach(number => {
+    number.addEventListener('mouseover', () => (number.style.cssText = "background-color: rgb(153, 115, 69);"))
 })
-buttons.forEach(button => {
-    button.addEventListener('mouseout', () => (button.style.cssText = "background-color: rgb(121, 90, 53);"))
+numbersButton.forEach(number => {
+    number.addEventListener('mouseout', () => (number.style.cssText = "background-color: rgb(121, 90, 53);"))
 })
 
 // get value of num button and display to screen
-buttons.forEach(button => (button.addEventListener('click', addInputCurrent)));
+numbersButton.forEach(number => (number.addEventListener('click', addInputCurrent)));
 
-// operatot button
-operatorButton.forEach(operator => operator.addEventListener('click', function() {
-    if (screenCurrent.textContent == "") {
-        updateScreen('')
-        console.log('kosong')
+// operator button
+operatorButton.forEach(opt => opt.addEventListener('click', function() {
+    if(previousValue != ''){
+        handleOperator(this.textContent)
+        if(currentValue != '') {
+            calculate()
+            previousValue = currentValue + this.textContent
+            currentValue = ''
+            updatePrevScreen(previousValue)
+            updateCurrentScreen(currentValue)
+            operator = this.textContent
+
+        }
     }
-    let newNumber = screenCurrent.textContent + this.textContent
-    screenPrev.innerHTML = newNumber
-    console.log(newNumber)
+    if (currentValue == "") return ;
+    handleOperator(this.textContent);
+    console.log(previousValue)
+    updateCurrentScreen('');
+    updatePrevScreen(previousValue)
+    console.log(currentValue)
 }))
+// equalButton
+equalButton.addEventListener('click', calculate)
 
-// adding the input num button to the screen
+
+// adding the input number to the screen
 function addInputCurrent() {
-    if(Number.isInteger(parseInt(this.textContent)) || this.textContent == ".") {
-        let newNumber = screenCurrent.textContent + this.textContent;
-        console.log(`firstNum2IF: ${newNumber}`)
-        updateScreen(newNumber)
-    } 
+    handleNumber(this.textContent);
+    console.log(`current num(addInputCurrent): ${currentValue}`)
+    updateCurrentScreen(currentValue);
 }
 
-function updateScreen(num) {
+function handleNumber(num){
+    a = currentValue.toString()
+    console.log(a)
+    console.log(typeof(a))
+    if(a.length <= 7) {
+        console.log(a)
+        console.log(typeof(a))
+        currentValue += num;
+    }
+}
+
+function handleOperator(op) {
+    if (operator != ''){
+        console.log(previousValue)
+        previousValue = previousValue.toString().slice(0,-1) + op
+        console.log(previousValue)
+        updatePrevScreen(previousValue)  
+        console.log(op)
+    } else {
+        console.log(op)
+        previousValue = currentValue + op
+        operator = op
+        currentValue = ''
+    }
+}
+
+function calculate (){
+    const a = parseInt(previousValue.slice(0,-1))
+    calculate2(a, operator, currentValue)
+    updateCurrentScreen(currentValue)
+    previousValue = '';
+    updatePrevScreen(previousValue)
+    operator = ''
+}
+
+
+function updateCurrentScreen(num) {
     screenCurrent.innerHTML = num;
+}
+
+function updatePrevScreen(num) {
+    screenPrev.innerHTML = num;
+}
+
+function calculate2(a, operator, b){
+    if (operator == '+') {
+        currentValue = (parseInt(a) + parseInt(b))
+    } else if (operator == '-') {
+        currentValue = (parseInt(a) - parseInt(b))
+    } else if (operator == '*') {
+        currentValue = (parseInt(a) * parseInt(b))
+    } else if (operator == '/') {
+        currentValue = (parseInt(a) / parseInt(b))
+    } //else if (operator == '-') {
+        //currentValue = (parseInt(a) - parseInt(b))
+    //}
 }
