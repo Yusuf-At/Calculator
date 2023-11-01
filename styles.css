@@ -2,6 +2,10 @@ body {
     background-color: rgb(82, 62, 39);
 }
 
+.button:hover {
+    background-color: rgb(153, 115, 69);
+}
+
 .calulator-container {
     width: 500px;
     height: 500px;
@@ -25,6 +29,8 @@ body {
     border: 1px solid black;
     border-radius: 15px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    transition-duration: 0.3s;
+    cursor: pointer;
 }
 .screen {
     grid-column: 1/5;
@@ -37,6 +43,7 @@ body {
     align-items: flex-end;
     height: 120px;
 }
+
 .previous-operand,
 .current {
     font-size: 42px;
@@ -53,5 +60,16 @@ body {
     align-items: center;
     justify-content: center;
     background-color: rgb(121, 90, 53);
-
+}
+.clear {
+    background-color: rgb(201, 22, 22);
+    font-style: oblique;
+    font-weight: 800;
+}
+.delete {
+    background-color: rgb(141, 25, 25);
+}
+.operator, 
+.equal {
+    background-color: rgb(158, 126, 67);
 }

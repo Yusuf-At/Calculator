@@ -3,6 +3,7 @@ const operatorButton = document.querySelectorAll('.operator');
 const equalButton = document.querySelector('.equal');
 const deleteButton = document.querySelector('.delete');
 const clearButton = document.querySelector('.clear');
+const decimalButton = document.querySelector('.decimal')
 
 const screenCurrent = document.querySelector('.current');
 const screenPrev = document.querySelector('.previous-operand');
@@ -11,38 +12,25 @@ let operator = '';
 let previousValue = '';
 let currentValue = '';
 
-// efect on button
-numbersButton.forEach(number => {
-    number.addEventListener('mouseover', () => (number.style.cssText = "background-color: rgb(153, 115, 69);"))
-})
-numbersButton.forEach(number => {
-    number.addEventListener('mouseout', () => (number.style.cssText = "background-color: rgb(121, 90, 53);"))
-})
-
 // get value of num button and display to screen
 numbersButton.forEach(number => (number.addEventListener('click', addInputCurrent)));
 
 // operator button
 operatorButton.forEach(opt => opt.addEventListener('click', function() {
-    if(previousValue != ''){
-        handleOperator(this.textContent)
-        if(currentValue != '') {
-            calculate()
-            previousValue = currentValue + this.textContent
-            currentValue = ''
-            updatePrevScreen(previousValue)
-            updateCurrentScreen(currentValue)
-            operator = this.textContent
-
-        }
-    }
+    // handle for change operator
+    if(previousValue != '' && currentValue == ''){
+        operator = this.textContent
+        console.log(operator)
+        screenPrev.textContent = previousValue + ' ' + operator;
+     }
+    // handle for operator button when current value empty and change operator
     if (currentValue == "") return ;
     handleOperator(this.textContent);
     console.log(previousValue)
-    updateCurrentScreen('');
-    updatePrevScreen(previousValue)
-    console.log(currentValue)
+    screenPrev.textContent = previousValue + ' ' + operator;
+    screenCurrent.textContent = ''
 }))
+
 // equalButton
 equalButton.addEventListener('click', calculate);
 
@@ -52,46 +40,34 @@ deleteButton.addEventListener('click', deleteCurrent);
 // clear Button
 clearButton.addEventListener('click', clear);
 
-
 // adding the input number to the screen
 function addInputCurrent() {
+    console.log(this)
     handleNumber(this.textContent);
-    console.log(`current num(addInputCurrent): ${currentValue}`)
-    updateCurrentScreen(currentValue);
+    screenCurrent.textContent = currentValue;
 }
 
 function handleNumber(num){
-    a = currentValue.toString()
-    console.log(a)
-    console.log(typeof(a))
-    if(a.length <= 7) {
-        console.log(a)
-        console.log(typeof(a))
+    if(currentValue.length <= 12) {
         currentValue += num;
     }
 }
 
 function handleOperator(op) {
     if (operator != ''){
-        console.log(previousValue)
-        previousValue = previousValue.toString().slice(0,-1) + op
-        console.log(previousValue)
-        updatePrevScreen(previousValue)  
-        console.log(op)
+        previousValue = calculate2(previousValue, operator, currentValue)
     } else {
-        console.log(op)
-        previousValue = currentValue + op
-        operator = op
-        currentValue = ''
+        previousValue = currentValue
     }
+    operator = op
+    currentValue = ''
 }
 
 function calculate (){
-    const a = parseInt(previousValue.slice(0,-1))
-    calculate2(a, operator, currentValue)
-    updateCurrentScreen(currentValue)
+    currentValue = calculate2(previousValue, operator, currentValue)
+    screenCurrent.textContent = currentValue
     previousValue = '';
-    updatePrevScreen(previousValue)
+    screenPrev.textContent = ''
     operator = ''
 }
 
@@ -108,24 +84,25 @@ function clear() {
     screenPrev.textContent = currentValue ;
 }
 
-function updateCurrentScreen(num) {
-    screenCurrent.innerHTML = num;
-}
-
-function updatePrevScreen(num) {
-    screenPrev.innerHTML = num;
-}
-
-function calculate2(a, operator, b){
+function calculate2(previousValue, operator, currentValue){
+    let a = parseFloat(previousValue);
+    let b = parseFloat(currentValue);
     if (operator == '+') {
-        currentValue = (parseInt(a) + parseInt(b))
+        return a + b;
     } else if (operator == '-') {
-        currentValue = (parseInt(a) - parseInt(b))
+        return a - b;
     } else if (operator == '*') {
-        currentValue = (parseInt(a) * parseInt(b))
+        return a * b;
     } else if (operator == '/') {
-        currentValue = (parseInt(a) / parseInt(b))
+        return a / b;
     } //else if (operator == '-') {
-        //currentValue = (parseInt(a) - parseInt(b))
+        //currentValue =  - b)
     //}
 }
+
+// Keyboard support
+document.addEventListener('keydown', function(e) {
+   let data = document.querySelector(`button[data-key="${e.key}"]`)
+   console.log(data);
+    data.click();
+})
